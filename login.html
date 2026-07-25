@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Log in — InternHub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/core.css">
+</head>
+<body>
+<div class="bg-field"></div>
+<div class="bg-grid"></div>
+
+<header class="topnav">
+  <div class="topnav-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12l7-4 9 4-9 4-7-4z" stroke="#10002b" stroke-width="2" stroke-linejoin="round"/></svg></div>
+      InternHub
+    </a>
+    <a href="register.html" class="btn btn-ghost btn-sm">Create account</a>
+  </div>
+</header>
+
+<main class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="logo-mark" style="width:44px;height:44px;border-radius:12px;"><svg viewBox="0 0 24 24" fill="none" style="width:22px;height:22px;"><path d="M4 12l7-4 9 4-9 4-7-4z" stroke="#10002b" stroke-width="2" stroke-linejoin="round"/></svg></div>
+    </div>
+    <h1 class="auth-title">Welcome back</h1>
+    <p class="auth-sub">Log in to your InternHub account</p>
+
+    <div class="role-tabs" id="role-tabs">
+      <div class="role-tab active" data-role="student">Student</div>
+      <div class="role-tab" data-role="faculty">Faculty</div>
+      <div class="role-tab" data-role="company">Company</div>
+      <div class="role-tab" data-role="admin">Admin</div>
+    </div>
+
+    <form id="login-form" novalidate>
+      <div class="form-group" id="group-email">
+        <label class="form-label" for="email">University / work email</label>
+        <input class="form-input" type="email" id="email" name="email" placeholder="you@nsu.edu.bd" autocomplete="username" required />
+        <div class="form-error" id="error-email">Enter a valid email address.</div>
+      </div>
+
+      <div class="form-group" id="group-password">
+        <label class="form-label" for="password">Password</label>
+        <div class="password-field">
+          <input class="form-input" type="password" id="password" name="password" placeholder="Enter your password" autocomplete="current-password" required minlength="8" />
+          <button type="button" class="password-toggle" id="toggle-password">Show</button>
+        </div>
+        <div class="form-error" id="error-password">Password must be at least 8 characters.</div>
+      </div>
+
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:22px;">
+        <label class="form-check">
+          <input type="checkbox" id="remember" /> Remember me
+        </label>
+        <a href="forgot-password.html" style="font-size:13px; color:var(--lilac); font-weight:600;">Forgot password?</a>
+      </div>
+
+      <button type="submit" class="btn btn-solid btn-lg btn-block" id="submit-btn">Log in</button>
+    </form>
+
+    <div class="auth-divider">OR</div>
+    <button class="btn btn-ghost btn-lg btn-block" type="button">
+      <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#c77dff" d="M21.35 11.1h-9.17v2.73h6.51c-.33 3.81-3.5 5.44-6.5 5.44C8.36 19.27 5 16.25 5 12s3.36-7.27 7.19-7.27c3.09 0 4.9 1.97 4.9 1.97L19 4.72S16.56 2 12.19 2C6.42 2 2.03 6.8 2.03 12s4.39 10 10.16 10c5.06 0 9.81-3.64 9.81-10 0-.6-.09-1.9-.09-1.9z"/></svg>
+      Continue with university SSO
+    </button>
+
+    <div class="auth-footer-link">Don't have an account? <a href="register.html">Create one</a></div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // Role tab switching — changes which login endpoint the form targets
+  const roleTabs = document.querySelectorAll('.role-tab');
+  let selectedRole = 'student';
+  roleTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      roleTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      selectedRole = tab.dataset.role;
+    });
+  });
+
+  // Show/hide password
+  const pwInput = document.getElementById('password');
+  document.getElementById('toggle-password').addEventListener('click', function(){
+    const isPw = pwInput.type === 'password';
+    pwInput.type = isPw ? 'text' : 'password';
+    this.textContent = isPw ? 'Hide' : 'Show';
+  });
+
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2600);
+  }
+
+  function setInvalid(groupId, errorId, isInvalid){
+    document.getElementById(groupId).classList.toggle('invalid', isInvalid);
+    document.getElementById(errorId).classList.toggle('show', isInvalid);
+  }
+
+  // Client-side validation + API call contract
+  document.getElementById('login-form').addEventListener('submit', async function(e){
+    e.preventDefault();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const passwordValid = password.length >= 8;
+
+    setInvalid('group-email', 'error-email', !emailValid);
+    setInvalid('group-password', 'error-password', !passwordValid);
+    if (!emailValid || !passwordValid) return;
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'Logging in…';
+    try {
+      // POST /api/auth/login  { email, password, role }
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, role: selectedRole })
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.message || 'Invalid credentials');
+      }
+      const data = await res.json();
+      showToast('Logged in — redirecting…');
+      const dest = { student: 'student-dashboard.html', faculty: 'faculty-dashboard.html', company: 'company-dashboard.html', admin: 'admin-dashboard.html' }[selectedRole];
+      setTimeout(() => { window.location.href = dest; }, 600);
+    } catch (err) {
+      showToast(err.message || 'Login failed. Check your credentials.');
+      btn.disabled = false;
+      btn.textContent = 'Log in';
+    }
+  });
+</script>
+</body>
+</html>

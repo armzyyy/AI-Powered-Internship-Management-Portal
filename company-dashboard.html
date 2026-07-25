@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Company Dashboard — InternHub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/core.css">
+
+</head>
+<body>
+<div class="bg-field"></div>
+<div class="bg-grid"></div>
+<div class="db-layout">
+  <aside class="db-sidebar">
+    <div class="db-sidebar-top">
+      <div class="logo db-logo"><div class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12l7-4 9 4-9 4-7-4z" stroke="#10002b" stroke-width="2" stroke-linejoin="round"/></svg></div>InternHub</div>
+    </div>
+    <nav class="db-nav">
+      <a href="company-dashboard.html" class="db-nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>Dashboard</a>
+      <a href="company-dashboard.html#postings" class="db-nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5a2 2 0 012-2h8l6 6v10a2 2 0 01-2 2H6a2 2 0 01-2-2z"/><path d="M14 3v6h6"/></svg>My Postings</a>
+      <a href="company-dashboard.html#applicants" class="db-nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>Applicants<span class="db-nav-badge">12</span></a>
+      <a href="company-dashboard.html#new" class="db-nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Post Internship</a>
+      <a href="notifications.html" class="db-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>Notifications<span class="db-nav-badge">1</span></a>
+      <a href="profile.html" class="db-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>Company Profile</a>
+      <a href="settings.html" class="db-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings</a>
+    </nav>
+    <a href="login.html" class="db-back-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to site
+    </a>
+  </aside>
+  <main class="db-main"><div class="db-topbar">
+      <div>
+        <div class="db-eyebrow"><span class="live-dot"></span> Company · Nexora Labs</div>
+        <div class="db-title">Welcome back, Nexora Labs</div>
+        <div class="db-subtitle">3 active postings · 24 total applicants</div>
+      </div>
+      <div class="db-topbar-right">
+        <button class="db-bell" onclick="window.location.href='notifications.html'">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          <span class="db-bell-dot">3</span>
+        </button>
+        <div class="db-avatar">NL</div>
+      </div>
+    </div>
+    <div class="db-stats-grid">
+      <div class="db-stat-card"><div class="db-stat-label">Active postings</div><div class="db-stat-value">3</div><div class="db-stat-hint">1 closing this week</div></div>
+      <div class="db-stat-card"><div class="db-stat-label">Total applicants</div><div class="db-stat-value">24</div><div class="db-stat-hint">+6 this week</div></div>
+      <div class="db-stat-card"><div class="db-stat-label">Interviews scheduled</div><div class="db-stat-value">5</div><div class="db-stat-hint">Next: Jul 29</div></div>
+      <div class="db-stat-card"><div class="db-stat-label">Interns onboarded</div><div class="db-stat-value">7</div><div class="db-stat-hint">This cycle</div></div>
+    </div>
+
+    <div class="db-grid-2">
+      <div class="db-panel" id="postings">
+        <div class="db-panel-head"><h3>My postings</h3><a href="#new" class="db-panel-link">+ New posting</a></div>
+        <div class="db-table">
+          <div class="db-table-row db-table-head"><span>Role</span><span>Applicants</span><span>Deadline</span><span>Status</span></div>
+          <div class="db-table-row"><span class="db-table-strong">Frontend Engineering Intern</span><span>11</span><span>Aug 10, 2026</span><span><span class="db-status-pill in-progress">Open</span></span></div>
+          <div class="db-table-row"><span class="db-table-strong">Backend Engineering Intern</span><span>9</span><span>Aug 3, 2026</span><span><span class="db-status-pill review">Closing soon</span></span></div>
+          <div class="db-table-row"><span class="db-table-strong">Product Design Intern</span><span>4</span><span>Aug 20, 2026</span><span><span class="db-status-pill in-progress">Open</span></span></div>
+        </div>
+      </div>
+      <div class="db-panel">
+        <div class="db-panel-head"><h3>Recent activity</h3></div>
+        <ul class="db-list" style="list-style:none;">
+          <li class="db-notification-item"><span class="db-dot application"></span><div><div class="db-list-title">Nusrat Jahan applied to Frontend Engineering Intern.</div><div class="db-list-sub">3h ago</div></div></li>
+          <li class="db-notification-item"><span class="db-dot application"></span><div><div class="db-list-title">2 new applicants for Backend Engineering Intern.</div><div class="db-list-sub">1d ago</div></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="db-panel" id="applicants">
+      <div class="db-panel-head"><h3>Applicants — Frontend Engineering Intern</h3><a href="#" class="db-panel-link">View all 11</a></div>
+      <div class="db-table">
+        <div class="db-table-row db-table-head"><span>Applicant</span><span>University</span><span>Applied</span><span>Status</span></div>
+        <div class="db-table-row"><span class="db-table-strong">Nusrat Jahan</span><span>North South University</span><span>2026-04-02</span><span><span class="db-status-pill accepted">Accepted</span></span></div>
+        <div class="db-table-row"><span class="db-table-strong">Imran Kabir</span><span>BRAC University</span><span>2026-04-01</span><span><span class="db-status-pill interview">Interview</span></span></div>
+        <div class="db-table-row"><span class="db-table-strong">Sadia Islam</span><span>IUB</span><span>2026-03-30</span><span><span class="db-status-pill review">Under Review</span></span></div>
+      </div>
+    </div>
+
+    <div class="db-panel" id="new">
+      <div class="db-panel-head"><h3>Post a new internship</h3></div>
+      <form id="post-form" novalidate>
+        <div class="form-row-2">
+          <div class="form-group"><label class="form-label">Role title</label><input class="form-input" type="text" placeholder="e.g. Mobile App Development Intern" /></div>
+          <div class="form-group"><label class="form-label">Work type</label><select class="form-select"><option>Remote</option><option>Hybrid</option><option>On-site</option></select></div>
+        </div>
+        <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" placeholder="What will the intern work on?"></textarea></div>
+        <div class="form-row-2">
+          <div class="form-group"><label class="form-label">Stipend (BDT/month)</label><input class="form-input" type="number" placeholder="e.g. 15000" /></div>
+          <div class="form-group"><label class="form-label">Application deadline</label><input class="form-input" type="date" /></div>
+        </div>
+        <button type="submit" class="btn btn-solid" id="post-btn">Publish posting</button>
+      </form>
+    </div>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+  document.getElementById('post-form').addEventListener('submit', async function(e){
+    e.preventDefault();
+    const btn = document.getElementById('post-btn'); btn.disabled = true; btn.textContent = 'Publishing…';
+    try {
+      // POST /api/internships { title, type, description, stipend, deadline }
+      await fetch('/api/internships', { method:'POST', headers:{'Content-Type':'application/json'}, body:'{}' });
+      const t = document.getElementById('toast'); t.textContent = 'Posting published.'; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2600);
+      this.reset();
+    } finally { btn.disabled = false; btn.textContent = 'Publish posting'; }
+  });
+</script>
+</body>
+</html>
