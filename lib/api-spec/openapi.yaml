@@ -1,0 +1,1147 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: InternHub API - AI-Powered Internship Management Portal
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+  - name: auth
+  - name: internships
+  - name: applications
+  - name: reports
+  - name: users
+  - name: dashboards
+  - name: ai
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/register:
+    post:
+      operationId: register
+      tags: [auth]
+      summary: Register new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterInput"
+      responses:
+        "201":
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout current user
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /internships:
+    get:
+      operationId: listInternships
+      tags: [internships]
+      summary: List all internships with filters
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: location
+          in: query
+          schema:
+            type: string
+            enum: [remote, hybrid, on-site, all]
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [newest, deadline]
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [open, closed, all]
+      responses:
+        "200":
+          description: Internship listings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternshipListResponse"
+    post:
+      operationId: createInternship
+      tags: [internships]
+      summary: Create a new internship posting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InternshipInput"
+      responses:
+        "201":
+          description: Internship created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Internship"
+
+  /internships/{id}:
+    get:
+      operationId: getInternship
+      tags: [internships]
+      summary: Get a single internship
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Internship detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Internship"
+    patch:
+      operationId: updateInternship
+      tags: [internships]
+      summary: Update an internship
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InternshipUpdate"
+      responses:
+        "200":
+          description: Updated internship
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Internship"
+    delete:
+      operationId: deleteInternship
+      tags: [internships]
+      summary: Delete an internship
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /internships/{id}/apply:
+    post:
+      operationId: applyToInternship
+      tags: [applications]
+      summary: Submit an application to an internship
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicationInput"
+      responses:
+        "201":
+          description: Application submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+
+  /applications:
+    get:
+      operationId: listApplications
+      tags: [applications]
+      summary: List applications (filtered by role context)
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, interview, accepted, rejected, all]
+        - name: internshipId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Applications list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Application"
+
+  /applications/{id}:
+    get:
+      operationId: getApplication
+      tags: [applications]
+      summary: Get application details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Application detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+    patch:
+      operationId: updateApplicationStatus
+      tags: [applications]
+      summary: Update application status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicationStatusUpdate"
+      responses:
+        "200":
+          description: Updated application
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+
+  /reports:
+    get:
+      operationId: listReports
+      tags: [reports]
+      summary: List weekly reports
+      parameters:
+        - name: studentId
+          in: query
+          schema:
+            type: integer
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, reviewed, all]
+      responses:
+        "200":
+          description: Reports list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Report"
+    post:
+      operationId: submitReport
+      tags: [reports]
+      summary: Submit a weekly report
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportInput"
+      responses:
+        "201":
+          description: Report submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Report"
+
+  /reports/{id}:
+    get:
+      operationId: getReport
+      tags: [reports]
+      summary: Get a report
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Report detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Report"
+    patch:
+      operationId: updateReport
+      tags: [reports]
+      summary: Update report or add feedback
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportUpdate"
+      responses:
+        "200":
+          description: Updated report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Report"
+
+  /users:
+    get:
+      operationId: listUsers
+      tags: [users]
+      summary: List all users (admin only)
+      parameters:
+        - name: role
+          in: query
+          schema:
+            type: string
+            enum: [student, faculty, company, admin, all]
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Users list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+
+  /users/{id}:
+    get:
+      operationId: getUser
+      tags: [users]
+      summary: Get user profile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    patch:
+      operationId: updateUser
+      tags: [users]
+      summary: Update user profile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdate"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    delete:
+      operationId: deleteUser
+      tags: [users]
+      summary: Delete a user (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /profile:
+    get:
+      operationId: getProfile
+      tags: [users]
+      summary: Get current user profile
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    patch:
+      operationId: updateProfile
+      tags: [users]
+      summary: Update current user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdate"
+      responses:
+        "200":
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /dashboard/student:
+    get:
+      operationId: getStudentDashboard
+      tags: [dashboards]
+      summary: Student dashboard summary
+      responses:
+        "200":
+          description: Dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudentDashboard"
+
+  /dashboard/faculty:
+    get:
+      operationId: getFacultyDashboard
+      tags: [dashboards]
+      summary: Faculty dashboard summary
+      responses:
+        "200":
+          description: Dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FacultyDashboard"
+
+  /dashboard/company:
+    get:
+      operationId: getCompanyDashboard
+      tags: [dashboards]
+      summary: Company dashboard summary
+      responses:
+        "200":
+          description: Dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanyDashboard"
+
+  /dashboard/admin:
+    get:
+      operationId: getAdminDashboard
+      tags: [dashboards]
+      summary: Admin dashboard summary
+      responses:
+        "200":
+          description: Dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminDashboard"
+
+  /ai/resume-review:
+    post:
+      operationId: reviewResume
+      tags: [ai]
+      summary: AI resume review
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResumeReviewInput"
+      responses:
+        "200":
+          description: AI review result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiReviewResponse"
+
+  /ai/cover-letter:
+    post:
+      operationId: generateCoverLetter
+      tags: [ai]
+      summary: AI cover letter generation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CoverLetterInput"
+      responses:
+        "200":
+          description: Generated cover letter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiTextResponse"
+
+  /ai/interview-questions:
+    post:
+      operationId: generateInterviewQuestions
+      tags: [ai]
+      summary: AI interview question generator
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InterviewQuestionsInput"
+      responses:
+        "200":
+          description: Interview questions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InterviewQuestionsResponse"
+
+  /ai/report-generator:
+    post:
+      operationId: generateReport
+      tags: [ai]
+      summary: AI weekly report generator
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportGeneratorInput"
+      responses:
+        "200":
+          description: Generated report draft
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiTextResponse"
+
+  /ai/skill-gap:
+    post:
+      operationId: analyzeSkillGap
+      tags: [ai]
+      summary: AI skill gap analysis
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SkillGapInput"
+      responses:
+        "200":
+          description: Skill gap analysis
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SkillGapResponse"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+
+    MessageResponse:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+
+    LoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+
+        password:
+          type: string
+
+    RegisterInput:
+      type: object
+      required: [name, email, password, role]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+
+        password:
+          type: string
+        role:
+          type: string
+          enum: [student, faculty, company, admin]
+        university:
+          type: ["string", "null"]
+        companyName:
+          type: ["string", "null"]
+
+    AuthResponse:
+      type: object
+      required: [user, token]
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        token:
+          type: string
+
+    User:
+      type: object
+      required: [id, name, email, role, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum: [student, faculty, company, admin]
+        university:
+          type: ["string", "null"]
+        companyName:
+          type: ["string", "null"]
+        bio:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        skills:
+          type: array
+          items:
+            type: string
+        profileStrength:
+          type: ["integer", "null"]
+        createdAt:
+          type: string
+          format: date-time
+
+    UserUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        bio:
+          type: string
+        phone:
+          type: string
+        university:
+          type: string
+        companyName:
+          type: string
+        skills:
+          type: array
+          items:
+            type: string
+
+    Internship:
+      type: object
+      required: [id, role, company, location, type, duration, stipend, deadline, openings, description, tags, status, createdAt, daysLeft]
+      properties:
+        id:
+          type: integer
+        role:
+          type: string
+        company:
+          type: string
+        location:
+          type: string
+        type:
+          type: string
+          enum: [Remote, Hybrid, On-site]
+        duration:
+          type: string
+        stipend:
+          type: string
+        deadline:
+          type: string
+          format: date
+        openings:
+          type: integer
+        description:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum: [open, closed]
+        daysLeft:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+
+    InternshipInput:
+      type: object
+      required: [role, company, location, type, duration, stipend, deadline, openings, description, tags]
+      properties:
+        role:
+          type: string
+        company:
+          type: string
+        location:
+          type: string
+        type:
+          type: string
+          enum: [Remote, Hybrid, On-site]
+        duration:
+          type: string
+        stipend:
+          type: string
+        deadline:
+          type: string
+          format: date
+        openings:
+          type: integer
+        description:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+
+    InternshipUpdate:
+      type: object
+      properties:
+        role:
+          type: string
+        location:
+          type: string
+        type:
+          type: string
+          enum: [Remote, Hybrid, On-site]
+        duration:
+          type: string
+        stipend:
+          type: string
+        deadline:
+          type: string
+          format: date
+        openings:
+          type: integer
+        description:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum: [open, closed]
+
+    InternshipListResponse:
+      type: object
+      required: [results, count]
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/Internship"
+        count:
+          type: integer
+
+    Application:
+      type: object
+      required: [id, internshipId, studentId, status, createdAt]
+      properties:
+        id:
+          type: integer
+        internshipId:
+          type: integer
+        studentId:
+          type: integer
+        studentName:
+          type: ["string", "null"]
+        internship:
+          $ref: "#/components/schemas/Internship"
+        status:
+          type: string
+          enum: [pending, interview, accepted, rejected]
+        coverLetter:
+          type: ["string", "null"]
+        resumeUrl:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+
+    ApplicationInput:
+      type: object
+      properties:
+        coverLetter:
+          type: string
+        resumeUrl:
+          type: string
+
+    ApplicationStatusUpdate:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [pending, interview, accepted, rejected]
+
+    Report:
+      type: object
+      required: [id, studentId, weekNumber, title, content, status, submittedAt]
+      properties:
+        id:
+          type: integer
+        studentId:
+          type: integer
+        studentName:
+          type: ["string", "null"]
+        weekNumber:
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+        status:
+          type: string
+          enum: [pending, reviewed]
+        feedback:
+          type: ["string", "null"]
+        reviewedBy:
+          type: ["string", "null"]
+        submittedAt:
+          type: string
+          format: date-time
+
+    ReportInput:
+      type: object
+      required: [weekNumber, title, content]
+      properties:
+        weekNumber:
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+
+    ReportUpdate:
+      type: object
+      properties:
+        content:
+          type: string
+        feedback:
+          type: string
+        status:
+          type: string
+          enum: [pending, reviewed]
+
+    StudentDashboard:
+      type: object
+      required: [activeInternship, reportsSubmitted, totalReports, pendingFeedback, profileStrength, recentApplications, recentReports, notifications, journeyStep]
+      properties:
+        activeInternship:
+          type: ["integer", "null"]
+        reportsSubmitted:
+          type: integer
+        totalReports:
+          type: integer
+        pendingFeedback:
+          type: integer
+        profileStrength:
+          type: integer
+        recentApplications:
+          type: array
+          items:
+            $ref: "#/components/schemas/Application"
+        recentReports:
+          type: array
+          items:
+            $ref: "#/components/schemas/Report"
+        notifications:
+          type: array
+          items:
+            $ref: "#/components/schemas/Notification"
+        journeyStep:
+          type: integer
+
+    FacultyDashboard:
+      type: object
+      required: [pendingReports, totalStudents, reviewedThisWeek, students, recentReports]
+      properties:
+        pendingReports:
+          type: integer
+        totalStudents:
+          type: integer
+        reviewedThisWeek:
+          type: integer
+        students:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        recentReports:
+          type: array
+          items:
+            $ref: "#/components/schemas/Report"
+
+    CompanyDashboard:
+      type: object
+      required: [activeListings, totalApplicants, pendingReviews, internships, recentApplications]
+      properties:
+        activeListings:
+          type: integer
+        totalApplicants:
+          type: integer
+        pendingReviews:
+          type: integer
+        internships:
+          type: array
+          items:
+            $ref: "#/components/schemas/Internship"
+        recentApplications:
+          type: array
+          items:
+            $ref: "#/components/schemas/Application"
+
+    AdminDashboard:
+      type: object
+      required: [totalUsers, totalInternships, totalApplications, totalReports, usersByRole, recentUsers, recentInternships]
+      properties:
+        totalUsers:
+          type: integer
+        totalInternships:
+          type: integer
+        totalApplications:
+          type: integer
+        totalReports:
+          type: integer
+        usersByRole:
+          type: object
+          additionalProperties:
+            type: integer
+        recentUsers:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        recentInternships:
+          type: array
+          items:
+            $ref: "#/components/schemas/Internship"
+
+    Notification:
+      type: object
+      required: [id, type, message, time]
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+          enum: [feedback, deadline, application, system]
+        message:
+          type: string
+        time:
+          type: string
+        read:
+          type: boolean
+
+    ResumeReviewInput:
+      type: object
+      required: [resumeText]
+      properties:
+        resumeText:
+          type: string
+        targetRole:
+          type: ["string", "null"]
+
+    AiReviewResponse:
+      type: object
+      required: [score, feedback, suggestions]
+      properties:
+        score:
+          type: integer
+        feedback:
+          type: string
+        suggestions:
+          type: array
+          items:
+            type: string
+
+    CoverLetterInput:
+      type: object
+      required: [internshipId, studentBackground]
+      properties:
+        internshipId:
+          type: integer
+        studentBackground:
+          type: string
+
+    AiTextResponse:
+      type: object
+      required: [result]
+      properties:
+        result:
+          type: string
+
+    InterviewQuestionsInput:
+      type: object
+      required: [role, company]
+      properties:
+        role:
+          type: string
+        company:
+          type: string
+
+    InterviewQuestionsResponse:
+      type: object
+      required: [questions]
+      properties:
+        questions:
+          type: array
+          items:
+            type: string
+
+    ReportGeneratorInput:
+      type: object
+      required: [notes, weekNumber]
+      properties:
+        notes:
+          type: string
+        weekNumber:
+          type: integer
+
+    SkillGapInput:
+      type: object
+      required: [studentSkills, targetRole]
+      properties:
+        studentSkills:
+          type: array
+          items:
+            type: string
+        targetRole:
+          type: string
+
+    SkillGapResponse:
+      type: object
+      required: [missingSkills, recommendations]
+      properties:
+        missingSkills:
+          type: array
+          items:
+            type: string
+        recommendations:
+          type: array
+          items:
+            type: string
+        matchPercent:
+          type: integer
